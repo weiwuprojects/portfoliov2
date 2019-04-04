@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta name="X-UA-Compatible" content="IE=edge">
+        <meta name="author" content="Andrew Chan">
+        <title>Andrew Chan</title>
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta content="black" name="apple-mobile-web-app-status-bar-style">
+        <meta content="telephone=no" name="format-detection">
+        <meta name="renderer" content="webkit">
+        <link rel="short icon" href="assets/favicon.png" type="image/x-icon">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+
+        <div class="grid">
+
+            <div class="sidebar animated fadeInDown">
+                <div class="logo-title">
+                    <div class="title">
+                        <img class="logo" src="assets/logo2x.png">
+                        <h3 title=""><a href="/">Andrew Chan</a></h3>
+                        <div class="description">
+                            <p>a software developer</p>
+                        </div>
+                    </div>
+                    </div>
+                    <ul class="social-links">
+                    <li><i class="fa fa-github fa-2x"></i><a href="https://github.com/weiwuprojects">@weiwuprojects</a></li>
+                    <li><i class="fa fa-map-marker fa-2x"></i>Los Angeles, CA</li>
+                    </ul>
+                    <div class="footer">
+                    </div>
+            </div>
+        <div class="main animated fadeInDown" style="animation-delay: 0.5s;">
+                    <!-- {# {{ include('navbar.html.twig') }} #} -->
+
+                <div class="content">
+                    <h1>My Projects</h1>
+                    <p style="margin-top: -15px; color: #76787B;">Repositories of software I've built</p>
+                    <div class="projects-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        
+        const pinnedReposIDs = [ 172282308, 161710980, 88451503, 162648778 ];
+
+        function getRepos(){
+            let url = 'https://api.github.com/users/weiwuprojects/repos';
+            let options = { method: 'GET' };
+            return fetch(url, options)
+                    .then( res => res.json())
+                    .then( values => { return values });
+        }
+
+        function renderRepoCards(repos){
+            let cardsContainer = document.querySelector('.projects-container');
+            let pinnedRepos = repos.filter( repo => pinnedReposIDs.includes(repo.id) );
+            let htmlString = pinnedRepos.reduce( (acc, repo) => { return acc + createRepoCard(repo) } , '');
+            cardsContainer.insertAdjacentHTML('afterbegin', htmlString);
+        }
+
+        function createRepoCard(repo){
+            return `
+                <div class="repo-card">
+                    <span>
+                        <i class="fa fa-book"></i><a href="${repo.html_url}" target="_blank">${repo.name}</a>
+                    </span>
+                    ${repo.homepage ? `<a href="${repo.homepage}" target="_blank" style="float: right;"><i class="fa fa-external-link"></i></a>` : ''}
+                    <p>${repo.description}</p>
+                </div>
+            `;
+        }
+
+
+        getRepos().then( repos => renderRepoCards(repos) )
+
+    </script>
+</html>
